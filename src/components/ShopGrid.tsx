@@ -8,7 +8,7 @@ export function ShopGrid() {
         <div className="mb-14 text-center">
           <h2 className="font-display text-4xl text-ink sm:text-5xl">Shop Bisbas</h2>
           <p className="mt-4 text-xs tracking-[0.22em] text-ink/70">
-            CHOOSE YOUR SIZE. ADD TO CART.
+            GREEN OR RED. BOTTLE OR JAR.
           </p>
           <div className="mx-auto mt-4 h-[2px] w-10 bg-burgundy" />
         </div>

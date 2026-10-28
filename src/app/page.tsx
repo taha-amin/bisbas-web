@@ -22,10 +22,10 @@ export default function Home() {
               <span aria-hidden>→</span>
             </Link>
           </div>
-          <div className="relative mx-auto aspect-[4/5] w-full max-w-[480px] overflow-hidden rounded-[2rem] bg-hero lg:max-w-none">
+          <div className="relative mx-auto aspect-[6/5] w-full max-w-[560px] overflow-hidden rounded-[2rem] bg-hero lg:max-w-none">
             <Image
-              src="/images/jars.jpg"
-              alt="Jars of Original and Spicy Bisbas sauce with lime, garlic, tomato, and chili peppers"
+              src="/images/hero-front.jpg"
+              alt="Original and Spicy Bisbas sauce in jars and bottles, with lime, garlic, and chili peppers"
               fill
               priority
               className="object-contain"

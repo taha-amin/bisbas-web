@@ -14,7 +14,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="flex flex-col items-center text-center">
       <div
-        className={`group relative mb-6 aspect-[4/5] w-full max-w-[360px] overflow-hidden rounded-[1.35rem] bg-hero ${
+        className={`group relative mb-6 aspect-[3/4] w-full max-w-[320px] overflow-hidden rounded-[1.35rem] bg-white ${
           pairingsOpen ? "is-open" : ""
         }`}
       >
@@ -28,10 +28,10 @@ export function ProductCard({ product }: { product: Product }) {
         >
           <Image
             src={selected.image}
-            alt={`${product.name}, ${selected.label}`}
+            alt={`${product.name} ${selected.format}`}
             fill
-            className="object-contain"
-            sizes="360px"
+            className="object-contain p-4"
+            sizes="320px"
           />
           <span className="pairing-hint" aria-hidden>
             See pairings
@@ -60,8 +60,12 @@ export function ProductCard({ product }: { product: Product }) {
           </ul>
         </div>
       </div>
-      <h3 className="font-display text-2xl text-ink sm:text-[28px]">{product.name}</h3>
-      <div className="mt-5 flex items-center gap-3">
+      <p className="text-[11px] font-semibold tracking-[0.22em] text-burgundy uppercase">
+        {product.color}
+      </p>
+      <h3 className="mt-1 font-display text-2xl text-ink sm:text-[28px]">{product.name}</h3>
+      <p className="mt-2 text-sm text-ink/60">Bottle or jar</p>
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         {product.sizes.map((size) => {
           const active = size.id === sizeId;
           return (
@@ -75,7 +79,7 @@ export function ProductCard({ product }: { product: Product }) {
                   : "border-ink/20 bg-white text-ink hover:border-ink/40"
               }`}
             >
-              {size.label} ${size.price}
+              {size.format} · {size.label} ${size.price}
             </button>
           );
         })}

@@ -76,7 +76,7 @@ export default function CheckoutPage() {
             return (
               <li key={`${item.productId}-${item.sizeId}`} className="flex justify-between text-sm">
                 <span>
-                  {product.name} · {size.label} × {item.quantity}
+                  {product.name} · {size.format} · {size.label} × {item.quantity}
                 </span>
                 <span>${size.price * item.quantity}</span>
               </li>

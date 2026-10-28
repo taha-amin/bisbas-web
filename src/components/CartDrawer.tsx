@@ -52,7 +52,7 @@ export function CartDrawer() {
                     <div className="min-w-0 flex-1">
                       <p className="font-medium">{product.name}</p>
                       <p className="text-sm text-ink/60">
-                        {size.label} · ${size.price}
+                        {size.format} · {size.label} · ${size.price}
                       </p>
                       <div className="mt-2 flex items-center gap-3">
                         <div className="flex items-center rounded-full border border-ink/15">

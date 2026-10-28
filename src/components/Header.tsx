@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
+import { INSTAGRAM_URL } from "@/lib/social";
+import { InstagramLink } from "./InstagramLink";
 import { Logo } from "./Logo";
 
 const nav = [
@@ -48,7 +50,8 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center justify-self-end gap-3">
+        <div className="flex items-center justify-self-end gap-1 sm:gap-3">
+          <InstagramLink />
           <button
             type="button"
             onClick={openCart}
@@ -86,6 +89,15 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ink"
+            onClick={() => setMenuOpen(false)}
+          >
+            Instagram
+          </a>
         </nav>
       )}
     </header>
