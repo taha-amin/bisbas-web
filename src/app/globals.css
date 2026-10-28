@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-paper: #f7f1e8;
+  --color-hero: #efe6d8;
+  --color-burgundy: #8b1e2d;
+  --color-burgundy-dark: #6f1623;
+  --color-ink: #1a1512;
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-script: var(--font-script);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+}
+
+.font-script {
+  font-family: var(--font-script), cursive;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  background: var(--color-burgundy);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0.78rem 1.5rem;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: var(--color-burgundy-dark);
+}
+
+.field {
+  width: 100%;
+  border: 1px solid rgb(26 21 18 / 0.16);
+  border-radius: 0.75rem;
+  background: white;
+  padding: 0.75rem 0.9rem;
+  outline: none;
+}
+
+.field:focus {
+  border-color: var(--color-burgundy);
+  box-shadow: 0 0 0 3px rgb(139 30 45 / 0.12);
+}
+
+.pairing-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  z-index: 1;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgb(247 241 232 / 0.88);
+  padding: 0.28rem 0.7rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(26 21 18 / 0.55);
+  opacity: 1;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.pairing-badge {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  z-index: 2;
+  width: min(100%, 250px);
+  transform: translateX(-50%) translateY(14px) scale(0.96);
+  border-radius: 1.05rem;
+  border: 1px solid rgb(139 30 45 / 0.12);
+  background: linear-gradient(180deg, #fffaf3 0%, #f4eadc 100%);
+  padding: 0.85rem 0.8rem 0.9rem;
+  box-shadow:
+    0 14px 30px rgb(26 21 18 / 0.12),
+    0 1px 0 rgb(255 255 255 / 0.8) inset;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.28s ease,
+    transform 0.38s cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+
+.pairing-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  color: var(--color-burgundy);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.pairing-chip {
+  border-radius: 999px;
+  background: white;
+  border: 1px solid rgb(139 30 45 / 0.16);
+  color: var(--color-ink);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  padding: 0.28rem 0.62rem;
+}
+
+.group:hover .pairing-hint,
+.group:focus-within .pairing-hint,
+.group.is-open .pairing-hint {
+  opacity: 0;
+  transform: translateX(-50%) translateY(4px);
+}
+
+.group:hover .pairing-badge,
+.group:focus-within .pairing-badge,
+.group.is-open .pairing-badge {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.group:hover .pairing-chip,
+.group:focus-within .pairing-chip,
+.group.is-open .pairing-chip {
+  animation: pairing-chip-in 0.42s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+}
+
+@keyframes pairing-chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pairing-hint,
+  .pairing-badge,
+  .pairing-chip {
+    transition: none;
+    animation: none !important;
+  }
+}
