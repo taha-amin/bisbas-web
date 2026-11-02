@@ -27,11 +27,11 @@ export const products: Product[] = [
     description:
       "A family recipe of herbs, garlic, and chilies — Mediterranean brightness with East African soul. Bright, savory, and made to go on everything.",
     heat: "Mild heat",
-    image: "/images/red-jar.jpg",
+    image: "/images/products/red-jar.jpg",
     pairsWith: ["Pasta","Rice", "Bajiya", "Viyazi", "Grilled Chicken", "Beef Suqaar", "Sambusa", "Grilled Fish", "Tacos", "Shawarma"],
     sizes: [
-      { id: "10oz", label: "10 oz", format: "Bottle", price: 10, image: "/images/red-bottle.jpg" },
-      { id: "16oz", label: "16 oz", format: "Jar", price: 15, image: "/images/red-jar.jpg" },
+      { id: "10oz", label: "10 oz", format: "Bottle", price: 10, image: "/images/products/red-bottle.jpg" },
+      { id: "16oz", label: "16 oz", format: "Jar", price: 15, image: "/images/products/red-jar.jpg" },
     ],
   },
   {
@@ -41,11 +41,11 @@ export const products: Product[] = [
     description:
       "The original recipe turned up. Extra chili, the same love. For people who can't get enough heat with their flavor.",
     heat: "Bold heat",
-    image: "/images/green-jar.jpg",
+    image: "/images/products/green-jar.jpg",
     pairsWith: ["Rice", "Pasta", "Viyazi", "Roasted Goat (Hilib Ari)", "Bajiya", "Grilled Chicken", "Beef Suqaar", "Sambusa", "Grilled Fish", "Tacos"],
     sizes: [
-      { id: "10oz", label: "10 oz", format: "Bottle", price: 10, image: "/images/green-bottle.jpg" },
-      { id: "16oz", label: "16 oz", format: "Jar", price: 15, image: "/images/green-jar.jpg" },
+      { id: "10oz", label: "10 oz", format: "Bottle", price: 10, image: "/images/products/green-bottle.jpg" },
+      { id: "16oz", label: "16 oz", format: "Jar", price: 15, image: "/images/products/green-jar.jpg" },
     ],
   },
 ];

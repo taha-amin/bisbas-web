@@ -1,37 +1,43 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
 import { products } from "@/lib/products";
 
 export default function CheckoutPage() {
-  const { items, ready, subtotal, clearCart } = useCart();
-  const [placed, setPlaced] = useState(false);
+  const { items, ready, subtotal } = useCart();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    clearCart();
-    setPlaced(true);
+  async function payWithStripe() {
+    setError(null);
+    setLoading(true);
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            productId: item.productId,
+            sizeId: item.sizeId,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+      const data = (await response.json()) as { url?: string; error?: string };
+      if (!response.ok || !data.url) {
+        throw new Error(data.error || "Could not start checkout.");
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not start checkout.");
+      setLoading(false);
+    }
   }
 
   if (!ready) {
     return <section className="mx-auto max-w-lg px-6 py-20 text-center">Loading checkout…</section>;
-  }
-
-  if (placed) {
-    return (
-      <section className="mx-auto max-w-lg px-6 py-20 text-center">
-        <h1 className="font-display text-4xl">Order received</h1>
-        <p className="mt-4 text-ink/70">
-          Thank you. This demo checkout doesn&apos;t charge a card — when you&apos;re ready, we can
-          connect Stripe or Square for live payments.
-        </p>
-        <Link href="/shop" className="btn-primary mt-8">
-          BACK TO SHOP
-        </Link>
-      </section>
-    );
   }
 
   if (items.length === 0) {
@@ -47,26 +53,13 @@ export default function CheckoutPage() {
   }
 
   return (
-    <section className="mx-auto grid max-w-5xl gap-10 px-6 py-14 lg:grid-cols-[1.1fr_0.9fr]">
-      <div>
-        <h1 className="font-display text-4xl">Checkout</h1>
-        <p className="mt-2 text-sm text-ink/60">
-          Demo checkout — no payment is processed.
-        </p>
-        <form onSubmit={onSubmit} className="mt-8 space-y-4">
-          <input className="field" name="name" placeholder="Full name" required />
-          <input className="field" name="email" type="email" placeholder="Email" required />
-          <input className="field" name="address" placeholder="Shipping address" required />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <input className="field" name="city" placeholder="City" required />
-            <input className="field" name="zip" placeholder="ZIP" required />
-          </div>
-          <button type="submit" className="btn-primary mt-2 w-full">
-            PLACE ORDER · ${subtotal}
-          </button>
-        </form>
-      </div>
-      <aside className="h-fit rounded-2xl bg-hero p-6">
+    <section className="mx-auto max-w-xl px-6 py-14">
+      <h1 className="font-display text-4xl">Checkout</h1>
+      <p className="mt-2 text-sm text-ink/60">
+        You&apos;ll pay securely with Stripe. Card, name, and shipping address are collected on the
+        next screen.
+      </p>
+      <aside className="mt-8 rounded-2xl bg-hero p-6">
         <h2 className="font-display text-2xl">Order summary</h2>
         <ul className="mt-5 space-y-3">
           {items.map((item) => {
@@ -88,6 +81,15 @@ export default function CheckoutPage() {
           <span>${subtotal}</span>
         </div>
       </aside>
+      {error ? <p className="mt-4 text-sm text-burgundy">{error}</p> : null}
+      <button
+        type="button"
+        className="btn-primary mt-6 w-full"
+        onClick={payWithStripe}
+        disabled={loading}
+      >
+        {loading ? "REDIRECTING TO STRIPE…" : `PAY WITH STRIPE · $${subtotal}`}
+      </button>
     </section>
   );
 }

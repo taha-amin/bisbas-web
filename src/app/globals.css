@@ -157,11 +157,19 @@ body {
   }
 }
 
+.product-shot {
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pairing-hint,
   .pairing-badge,
-  .pairing-chip {
+  .pairing-chip,
+  .product-shot {
     transition: none;
     animation: none !important;
+    transform: none !important;
   }
 }

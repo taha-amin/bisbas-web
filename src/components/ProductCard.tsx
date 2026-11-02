@@ -26,13 +26,25 @@ export function ProductCard({ product }: { product: Product }) {
           aria-controls={`pairings-${product.id}`}
           onClick={() => setPairingsOpen((open) => !open)}
         >
-          <Image
-            src={selected.image}
-            alt={`${product.name} ${selected.format}`}
-            fill
-            className="object-contain p-4"
-            sizes="320px"
-          />
+          {product.sizes.map((size) => {
+            const active = size.id === sizeId;
+            return (
+              <Image
+                key={size.image}
+                src={size.image}
+                alt={active ? `${product.name} ${size.format}` : ""}
+                fill
+                sizes="320px"
+                unoptimized
+                className={`product-shot object-contain object-center p-6 ${
+                  active
+                    ? "z-[1] scale-100 opacity-100"
+                    : "pointer-events-none scale-[0.92] opacity-0"
+                }`}
+                aria-hidden={!active}
+              />
+            );
+          })}
           <span className="pairing-hint" aria-hidden>
             See pairings
           </span>
@@ -73,9 +85,9 @@ export function ProductCard({ product }: { product: Product }) {
               key={size.id}
               type="button"
               onClick={() => setSizeId(size.id)}
-              className={`rounded-full border px-4 py-2 text-sm transition ${
+              className={`rounded-full border px-4 py-2 text-sm transition-all duration-300 ease-out ${
                 active
-                  ? "border-burgundy bg-burgundy text-white"
+                  ? "border-burgundy bg-burgundy text-white shadow-sm"
                   : "border-ink/20 bg-white text-ink hover:border-ink/40"
               }`}
             >

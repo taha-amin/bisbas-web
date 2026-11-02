@@ -46,6 +46,7 @@ export function CartDrawer() {
                         alt=""
                         fill
                         sizes="64px"
+                        unoptimized
                         className="object-contain"
                       />
                     </div>
