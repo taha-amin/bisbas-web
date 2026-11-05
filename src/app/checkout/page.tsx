@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { US_SHIPPING_DOLLARS } from "@/lib/commerce";
 import { useCart } from "@/lib/cart";
 import { products } from "@/lib/products";
 
@@ -56,8 +57,8 @@ export default function CheckoutPage() {
     <section className="mx-auto max-w-xl px-6 py-14">
       <h1 className="font-display text-4xl">Checkout</h1>
       <p className="mt-2 text-sm text-ink/60">
-        You&apos;ll pay securely with Stripe. Card, name, and shipping address are collected on the
-        next screen.
+        You&apos;ll pay securely with Stripe. Card, name, phone, and a US shipping address are
+        collected on the next screen.
       </p>
       <aside className="mt-8 rounded-2xl bg-hero p-6">
         <h2 className="font-display text-2xl">Order summary</h2>
@@ -76,9 +77,19 @@ export default function CheckoutPage() {
             );
           })}
         </ul>
-        <div className="mt-5 flex justify-between border-t border-black/10 pt-4 font-medium">
+        <div className="mt-5 flex justify-between border-t border-black/10 pt-4 text-sm">
           <span>Subtotal</span>
           <span>${subtotal}</span>
+        </div>
+        {US_SHIPPING_DOLLARS > 0 ? (
+          <div className="mt-2 flex justify-between text-sm text-ink/70">
+            <span>US shipping</span>
+            <span>${US_SHIPPING_DOLLARS}</span>
+          </div>
+        ) : null}
+        <div className="mt-4 flex justify-between border-t border-black/10 pt-4 font-medium">
+          <span>Total</span>
+          <span>${subtotal + US_SHIPPING_DOLLARS}</span>
         </div>
       </aside>
       {error ? <p className="mt-4 text-sm text-burgundy">{error}</p> : null}
@@ -88,7 +99,9 @@ export default function CheckoutPage() {
         onClick={payWithStripe}
         disabled={loading}
       >
-        {loading ? "REDIRECTING TO STRIPE…" : `PAY WITH STRIPE · $${subtotal}`}
+        {loading
+          ? "REDIRECTING TO STRIPE…"
+          : `PAY WITH STRIPE · $${subtotal + US_SHIPPING_DOLLARS}`}
       </button>
     </section>
   );

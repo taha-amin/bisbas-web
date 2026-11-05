@@ -1,5 +1,7 @@
 import Stripe from "stripe";
+import { US_SHIPPING_CENTS } from "@/lib/commerce";
 import { products, type SizeId } from "@/lib/products";
+import { getStripe, productImageUrl, siteUrl } from "@/lib/stripe";
 
 type CartPayloadItem = {
   productId: string;
@@ -7,26 +9,13 @@ type CartPayloadItem = {
   quantity: number;
 };
 
-function siteUrl(request: Request) {
-  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (fromEnv) return fromEnv;
-  const origin = request.headers.get("origin");
-  if (origin) return origin;
-  const host = request.headers.get("host");
-  const proto = request.headers.get("x-forwarded-proto") ?? "http";
-  return host ? `${proto}://${host}` : "http://localhost:3000";
-}
-
-function productImageUrl(base: string, path: string) {
-  if (base.includes("localhost") || base.includes("127.0.0.1")) return undefined;
-  return `${base}${path}`;
-}
-
 export async function POST(request: Request) {
-  const secret = process.env.STRIPE_SECRET_KEY;
-  if (!secret) {
+  let stripe: Stripe;
+  try {
+    stripe = getStripe();
+  } catch (err) {
     return Response.json(
-      { error: "Stripe is not configured. Add STRIPE_SECRET_KEY to the environment." },
+      { error: err instanceof Error ? err.message : "Stripe is not configured." },
       { status: 500 },
     );
   }
@@ -45,6 +34,7 @@ export async function POST(request: Request) {
 
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
   const origin = siteUrl(request);
+  const summary: string[] = [];
 
   for (const item of items) {
     const quantity = Math.floor(Number(item.quantity));
@@ -59,6 +49,7 @@ export async function POST(request: Request) {
     }
 
     const image = productImageUrl(origin, size.image);
+    summary.push(`${product.id}:${size.id}x${quantity}`);
     line_items.push({
       quantity,
       price_data: {
@@ -73,25 +64,53 @@ export async function POST(request: Request) {
     });
   }
 
-  const stripe = new Stripe(secret);
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    line_items,
-    success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${origin}/checkout`,
-    billing_address_collection: "required",
-    shipping_address_collection: {
-      allowed_countries: ["US"],
-    },
-    phone_number_collection: { enabled: true },
-    metadata: {
-      source: "bisbas-web",
-    },
-  });
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items,
+      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/checkout`,
+      billing_address_collection: "required",
+      phone_number_collection: { enabled: true },
+      shipping_address_collection: {
+        allowed_countries: ["US"],
+      },
+      shipping_options:
+        US_SHIPPING_CENTS > 0
+          ? [
+              {
+                shipping_rate_data: {
+                  type: "fixed_amount",
+                  fixed_amount: { amount: US_SHIPPING_CENTS, currency: "usd" },
+                  display_name: "US shipping",
+                  delivery_estimate: {
+                    minimum: { unit: "business_day", value: 5 },
+                    maximum: { unit: "business_day", value: 10 },
+                  },
+                },
+              },
+            ]
+          : undefined,
+      customer_creation: "always",
+      payment_intent_data: {
+        description: "Bisbas sauce order",
+      },
+      metadata: {
+        source: "bisbas-web",
+        items: summary.join(",").slice(0, 500),
+      },
+    });
 
-  if (!session.url) {
-    return Response.json({ error: "Could not start Stripe Checkout." }, { status: 500 });
+    if (!session.url) {
+      return Response.json({ error: "Could not start Stripe Checkout." }, { status: 500 });
+    }
+
+    return Response.json({ url: session.url });
+  } catch (err) {
+    const message =
+      err instanceof Stripe.errors.StripeError
+        ? err.message
+        : "Could not start Stripe Checkout.";
+    return Response.json({ error: message }, { status: 500 });
   }
-
-  return Response.json({ url: session.url });
 }
